@@ -296,7 +296,7 @@
 
 <section class="hero">
     <h1 class="serif">Beautiful Planners,<br>Built Your Way</h1>
-    <p>Premium printable planners for health, finance, wellness, and more. Or create your own custom planner in seconds.</p>
+    <p>Create beautiful, personalized printable planners instantly. Choose your type, pick your colors, download a full PDF. Completely free.</p>
     <div class="cta-row">
         <a href="#builder" class="btn btn-primary">Build Custom Planner</a>
         <a href="#products" class="btn btn-secondary">Browse Collection</a>
@@ -367,8 +367,9 @@
                 </select>
             </div>
             <button class="generate-btn" id="generate-btn" onclick="generatePlanner()">
-                Generate & Download PDF (Free Preview)
+                Generate & Download Full PDF — Free
             </button>
+            <p style="text-align:center; font-size:0.8rem; color:#a09a90; margin-top:0.5rem;">No signup. No watermarks. Yours to keep and print.</p>
         </div>
         <div class="builder-preview">
             <div class="preview-box" id="preview">
@@ -595,7 +596,7 @@ async function generatePlanner() {
             weekly: Array.from({length:12}, (_,i) => `Week ${i+1}`),
         };
 
-        for (let i = 0; i < Math.min(numPages, 5); i++) { // Free preview: 5 pages
+        for (let i = 0; i < numPages; i++) { // Full planner — no page limit
             const page = pdfDoc.addPage([W, H]);
             page.drawRectangle({ x: 0, y: 0, width: W, height: H, color: cream });
 
@@ -648,26 +649,32 @@ async function generatePlanner() {
             });
         }
 
-        // Watermark page for free version
-        const waterPage = pdfDoc.addPage([W, H]);
-        waterPage.drawRectangle({ x: 0, y: 0, width: W, height: H, color: cream });
-        const wmText = "Free Preview - 5 Pages";
-        const wmWidth = timesRomanBold.widthOfTextAtSize(wmText, 24);
-        waterPage.drawText(wmText, {
-            x: (W - wmWidth) / 2, y: H/2 + 40,
-            size: 24, font: timesRomanBold, color: accent
+        // Final page — support CTA
+        const endPage = pdfDoc.addPage([W, H]);
+        endPage.drawRectangle({ x: 0, y: 0, width: W, height: H, color: cream });
+        const tyText = "Thank you for using PlannerForge!";
+        const tyWidth = timesRomanBold.widthOfTextAtSize(tyText, 20);
+        endPage.drawText(tyText, {
+            x: (W - tyWidth) / 2, y: H/2 + 60,
+            size: 20, font: timesRomanBold, color: accent
         });
-        const wmText2 = `Full ${info.title} has ${numPages} pages`;
-        const wmWidth2 = timesRomanItalic.widthOfTextAtSize(wmText2, 14);
-        waterPage.drawText(wmText2, {
-            x: (W - wmWidth2) / 2, y: H/2,
-            size: 14, font: timesRomanItalic, color: warmGray
+        const tyText2 = `Your ${info.title} - ${numPages} pages, completely free.`;
+        const tyWidth2 = timesRomanItalic.widthOfTextAtSize(tyText2, 12);
+        endPage.drawText(tyText2, {
+            x: (W - tyWidth2) / 2, y: H/2 + 20,
+            size: 12, font: timesRomanItalic, color: warmGray
         });
-        const wmText3 = "Get the full version at saltedpixel.etsy.com";
-        const wmWidth3 = timesRoman.widthOfTextAtSize(wmText3, 12);
-        waterPage.drawText(wmText3, {
-            x: (W - wmWidth3) / 2, y: H/2 - 40,
-            size: 12, font: timesRoman, color: charcoal
+        const tyText3 = "Love it? Share plannerforge.saltedpixel.co with a friend.";
+        const tyWidth3 = timesRoman.widthOfTextAtSize(tyText3, 11);
+        endPage.drawText(tyText3, {
+            x: (W - tyWidth3) / 2, y: H/2 - 20,
+            size: 11, font: timesRoman, color: charcoal
+        });
+        const tyText4 = "More planners, trackers, and journals at saltedpixel.etsy.com";
+        const tyWidth4 = timesRoman.widthOfTextAtSize(tyText4, 10);
+        endPage.drawText(tyText4, {
+            x: (W - tyWidth4) / 2, y: H/2 - 50,
+            size: 10, font: timesRoman, color: warmGray
         });
 
         // Save and download
@@ -676,7 +683,7 @@ async function generatePlanner() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `PlannerForge_${info.title.replace(/\s+/g, '_')}_preview.pdf`;
+        a.download = `PlannerForge_${info.title.replace(/\s+/g, '_')}.pdf`;
         a.click();
         URL.revokeObjectURL(url);
 
@@ -686,7 +693,7 @@ async function generatePlanner() {
     }
 
     btn.disabled = false;
-    btn.textContent = 'Generate & Download PDF (Free Preview)';
+    btn.textContent = 'Generate & Download Full PDF';
 }
 
 function getSections(type) {
