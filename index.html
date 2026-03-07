@@ -428,7 +428,7 @@
     <div class="old-price">$64.87</div>
     <div class="new-price">$24.99</div>
     <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #ccc;">Health + Finance + Fitness + Academic + Lifestyle</p>
-    <a href="#" class="btn btn-primary" id="bundle-buy">Get the Bundle</a>
+    <a href="#builder" class="btn btn-primary" id="bundle-buy">Build a Custom Planner Free</a>
 </div>
 
 <footer>
@@ -505,7 +505,7 @@ PRODUCTS.forEach(p => {
                 <ul class="features">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
                 <div class="price-row">
                     <span class="price">${p.price}</span>
-                    <button class="buy-btn" onclick="alert('Store links coming soon! Products available on Etsy at saltedpixel.etsy.com')">View on Etsy</button>
+                    <a href="#builder" class="buy-btn" style="text-decoration:none; text-align:center;">Build Your Own</a>
                 </div>
             </div>
         </div>`;
