@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PlannerForge - Custom Printable Planners</title>
     <meta name="description" content="Create your own custom printable planner in seconds. Choose type, colors, sections, and download a beautiful PDF instantly.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#8ba485">
+    <meta property="og:title" content="PlannerForge - Custom Printable Planners">
+    <meta property="og:description" content="Premium printable planners for health, finance, wellness & more. Or build your own custom planner in seconds.">
+    <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -286,7 +295,7 @@
 <body>
 
 <nav>
-    <div class="logo">PlannerForge</div>
+    <div class="logo"><img src="logo.svg" alt="PlannerForge" height="36" style="vertical-align: middle;"></div>
     <div class="nav-links">
         <a href="#products">Shop</a>
         <a href="#builder">Build Your Own</a>
@@ -340,6 +349,25 @@
                     <option value="budget">Monthly Budget (12 months)</option>
                     <option value="fitness">Fitness Log (31 days)</option>
                     <option value="meal">Meal Planner (4 weeks)</option>
+                    <option value="migraine">Migraine Tracker (31 days)</option>
+                    <option value="fodmap">FODMAP Food Diary (31 days)</option>
+                    <option value="anxiety">Anxiety Journal / CBT (31 days)</option>
+                    <option value="wellness">Wellness Planner (31 days)</option>
+                    <option value="student">Student Planner (16 weeks)</option>
+                    <option value="wedding">Wedding Planner</option>
+                    <option value="business">Business Planner (12 months)</option>
+                    <option value="password">Password Organizer (A-Z)</option>
+                    <option value="reading">Reading Log (52 books)</option>
+                    <option value="sleep">Sleep Tracker (31 days)</option>
+                    <option value="project">Project Planner</option>
+                    <option value="cleaning">Cleaning Schedule</option>
+                    <option value="travel">Travel Planner</option>
+                    <option value="pregnancy">Pregnancy Journal (40 weeks)</option>
+                    <option value="pet">Pet Care Tracker</option>
+                    <option value="garden">Garden Planner</option>
+                    <option value="mood">Mood Tracker (31 days)</option>
+                    <option value="debt">Debt Payoff Planner</option>
+                    <option value="medication">Medication Tracker (31 days)</option>
                 </select>
             </div>
             <div class="form-group">
@@ -428,11 +456,30 @@ const PRODUCTS = [
 const PLANNER_TYPES = {
     daily: { title: "Daily Planner", sub: "31 Daily Pages", features: ["Morning check-in & mood", "Top 3 priorities", "Hourly schedule", "Evening reflection"] },
     weekly: { title: "Weekly Planner", sub: "12 Weekly Spreads", features: ["Week at a glance", "Goal setting", "To-do lists", "Weekly review"] },
-    habit: { title: "Habit Tracker", sub: "31-Day Grid", features: ["15 habit slots", "Visual tracking grid", "Monthly reflection", "Streak counter"] },
-    gratitude: { title: "Gratitude Journal", sub: "31 Daily Pages", features: ["3 daily gratitudes", "Positive moments", "What went well", "Appreciation notes"] },
-    budget: { title: "Monthly Budget", sub: "12 Monthly Pages", features: ["Income tracking", "Expense categories", "Savings goals", "Monthly summary"] },
-    fitness: { title: "Fitness Log", sub: "31 Daily Pages", features: ["Exercise logging", "Sets & reps", "Cardio tracking", "Nutrition notes"] },
-    meal: { title: "Meal Planner", sub: "4 Weekly Grids", features: ["7-day meal grid", "Shopping list", "Prep notes", "Budget tracking"] },
+    habit: { title: "Habit Tracker", sub: "31-Day Circle Grid", features: ["15 habit slots", "Fillable circle grid", "Mini calendar", "Monthly reflection"] },
+    gratitude: { title: "Gratitude Journal", sub: "90 Daily Pages", features: ["3 daily gratitudes", "Positive moments", "Appreciation practice", "Evening reflection"] },
+    budget: { title: "Monthly Budget", sub: "12 Monthly Pages", features: ["Income tracking", "Expense categories", "Savings goals with progress bar", "Annual overview"] },
+    fitness: { title: "Fitness Log", sub: "31 Daily Pages", features: ["10 exercises with sets/reps/weight", "Cardio & nutrition", "Energy battery tracker", "Body measurements"] },
+    meal: { title: "Meal Planner", sub: "4 Weekly Grids", features: ["7-day meal grid", "Shopping list by section", "Prep notes", "Budget tracking"] },
+    migraine: { title: "Migraine Tracker", sub: "31-Day Log", features: ["Visual pain scale (1-10 circles)", "12 symptom checkboxes", "12 trigger checkboxes", "Monthly pattern analysis"] },
+    fodmap: { title: "FODMAP Food Diary", sub: "31-Day IBS Tracker", features: ["4 meals with timing", "8 digestive symptoms", "Severity & stress scales", "Safe/trigger food summary"] },
+    anxiety: { title: "Anxiety Journal", sub: "31-Day CBT Workbook", features: ["Anxiety level circles (1-10)", "Trigger identification", "CBT thought record", "Coping strategy tracker"] },
+    wellness: { title: "Wellness Planner", sub: "31-Day Mind Body Soul", features: ["Mood faces & energy battery", "Water cup tracker", "Wellness habit circles", "Gratitude & reflection"] },
+    student: { title: "Student Planner", sub: "16-Week Academic", features: ["Semester course overview", "Weekly priority spreads", "Exam prep tracker", "Grade calculator"] },
+    wedding: { title: "Wedding Planner", sub: "Complete Organizer", features: ["Budget tracker (15 categories)", "Guest list (60+)", "Vendor contact sheet", "Timeline checklists"] },
+    business: { title: "Business Planner", sub: "12-Month Revenue Tracker", features: ["Revenue stream tracking", "Expense categories", "Marketing calendar", "Key business metrics"] },
+    password: { title: "Password Organizer", sub: "A-Z Account Tracker", features: ["26 alphabetical pages", "4 accounts per page", "Security questions", "Date tracking"] },
+    reading: { title: "Reading Log", sub: "52-Book Tracker", features: ["Book title & author", "Start/finish dates", "Rating (circle stars)", "Reading notes & quotes"] },
+    sleep: { title: "Sleep Tracker", sub: "31-Day Log", features: ["Bedtime & wake time", "Sleep quality circles", "Dream journal", "Energy correlation"] },
+    project: { title: "Project Planner", sub: "Multi-Project Organizer", features: ["Project overview & goals", "Task breakdown", "Timeline & milestones", "Resource tracking"] },
+    cleaning: { title: "Cleaning Schedule", sub: "Weekly & Monthly", features: ["Room-by-room checklists", "Daily/weekly/monthly tasks", "Supply inventory", "Deep clean tracker"] },
+    travel: { title: "Travel Planner", sub: "Trip Organizer", features: ["Itinerary builder", "Packing checklist", "Budget tracker", "Memory journal"] },
+    pregnancy: { title: "Pregnancy Journal", sub: "40-Week Tracker", features: ["Weekly symptom tracking", "Appointment log", "Baby development notes", "Birth plan prep"] },
+    pet: { title: "Pet Care Tracker", sub: "Health & Routine Log", features: ["Feeding schedule", "Vet visit log", "Medication tracker", "Activity & behavior notes"] },
+    garden: { title: "Garden Planner", sub: "Seasonal Organizer", features: ["Plant inventory", "Planting schedule", "Watering & care log", "Harvest tracker"] },
+    mood: { title: "Mood Tracker", sub: "31-Day Emotional Log", features: ["Daily mood circles to fill", "Trigger identification", "Sleep & energy correlation", "Monthly mood calendar"] },
+    debt: { title: "Debt Payoff Planner", sub: "Financial Freedom Tracker", features: ["Debt inventory", "Payment schedule", "Snowball/avalanche tracker", "Progress bar milestones"] },
+    medication: { title: "Medication Tracker", sub: "31-Day Log", features: ["Medication schedule grid", "Dose & time tracking", "Side effect notes", "Refill reminders"] },
 };
 
 const COLORS = {
@@ -590,10 +637,20 @@ async function generatePlanner() {
         });
 
         // --- Generate inner pages based on type ---
-        const numPages = type === 'budget' ? 12 : type === 'meal' ? 4 : type === 'weekly' ? 12 : 31;
+        const pageCounts = { budget: 12, meal: 4, weekly: 12, student: 16, business: 12, password: 26, reading: 52, pregnancy: 40, wedding: 8, habit: 12, garden: 12, cleaning: 4, travel: 7, project: 10 };
+        const numPages = pageCounts[type] || 31;
+        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         const pageLabels = {
-            budget: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+            budget: months, business: months, habit: months, garden: months,
             weekly: Array.from({length:12}, (_,i) => `Week ${i+1}`),
+            student: Array.from({length:16}, (_,i) => `Week ${i+1}`),
+            password: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+            reading: Array.from({length:52}, (_,i) => `Book ${i+1}`),
+            pregnancy: Array.from({length:40}, (_,i) => `Week ${i+1}`),
+            wedding: ['Overview', 'Budget', 'Guest List', 'Vendors', '12+ Mo Checklist', '6-12 Mo Checklist', '3-6 Mo Checklist', 'Week Of'],
+            cleaning: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            travel: Array.from({length:7}, (_,i) => `Day ${i+1}`),
+            project: Array.from({length:10}, (_,i) => `Phase ${i+1}`),
         };
 
         for (let i = 0; i < numPages; i++) { // Full planner — no page limit
@@ -713,15 +770,16 @@ function getSections(type) {
             { title: "WEEKLY REVIEW", lines: 3 },
         ],
         habit: [
-            { title: "HABITS TO TRACK", lines: 5 },
-            { title: "TODAY'S LOG", lines: 5 },
-            { title: "REFLECTIONS", lines: 4 },
+            { title: "DAILY HABITS (circle grid)", lines: 5 },
+            { title: "WATER TRACKER", lines: 2 },
+            { title: "MONTHLY REFLECTION", lines: 4 },
         ],
         gratitude: [
-            { title: "TODAY I'M GRATEFUL FOR", lines: 3 },
-            { title: "POSITIVE MOMENTS", lines: 4 },
-            { title: "WHAT WENT WELL", lines: 3 },
-            { title: "APPRECIATION NOTES", lines: 4 },
+            { title: "3 THINGS I'M GRATEFUL FOR", lines: 3 },
+            { title: "TODAY'S POSITIVE MOMENT", lines: 3 },
+            { title: "SOMEONE I APPRECIATE", lines: 3 },
+            { title: "AFFIRMATION", lines: 2 },
+            { title: "EVENING REFLECTION", lines: 3 },
         ],
         budget: [
             { title: "INCOME", lines: 4 },
@@ -730,15 +788,139 @@ function getSections(type) {
             { title: "SAVINGS & SUMMARY", lines: 3 },
         ],
         fitness: [
-            { title: "EXERCISES", lines: 6 },
+            { title: "EXERCISES (sets/reps/weight)", lines: 6 },
             { title: "CARDIO", lines: 3 },
-            { title: "NUTRITION", lines: 4 },
-            { title: "NOTES", lines: 3 },
+            { title: "NUTRITION SUMMARY", lines: 3 },
+            { title: "HOW I FEEL", lines: 3 },
         ],
         meal: [
-            { title: "MEAL PLAN", lines: 7 },
+            { title: "MEAL PLAN (7-day grid)", lines: 7 },
             { title: "SHOPPING LIST", lines: 6 },
             { title: "PREP NOTES", lines: 3 },
+        ],
+        migraine: [
+            { title: "PAIN LEVEL (1-10 circles)", lines: 2 },
+            { title: "PAIN LOCATION & TYPE", lines: 4 },
+            { title: "SYMPTOMS", lines: 4 },
+            { title: "POTENTIAL TRIGGERS", lines: 4 },
+            { title: "TREATMENT & TIMING", lines: 3 },
+        ],
+        fodmap: [
+            { title: "BREAKFAST", lines: 3 },
+            { title: "LUNCH", lines: 3 },
+            { title: "DINNER", lines: 3 },
+            { title: "SNACKS", lines: 2 },
+            { title: "SYMPTOMS & SEVERITY", lines: 3 },
+        ],
+        anxiety: [
+            { title: "MORNING ANXIETY LEVEL", lines: 2 },
+            { title: "TRIGGERS", lines: 3 },
+            { title: "THOUGHT RECORD (CBT)", lines: 6 },
+            { title: "COPING STRATEGIES", lines: 3 },
+            { title: "EVENING REFLECTION", lines: 2 },
+        ],
+        wellness: [
+            { title: "MOOD & ENERGY CHECK-IN", lines: 2 },
+            { title: "GRATITUDE", lines: 3 },
+            { title: "TOP 3 PRIORITIES", lines: 3 },
+            { title: "WELLNESS HABITS", lines: 4 },
+            { title: "NUTRITION", lines: 4 },
+            { title: "EVENING REFLECTION", lines: 2 },
+        ],
+        student: [
+            { title: "THIS WEEK'S PRIORITIES", lines: 3 },
+            { title: "MONDAY - WEDNESDAY", lines: 5 },
+            { title: "THURSDAY - FRIDAY", lines: 4 },
+            { title: "WEEKEND / STUDY", lines: 3 },
+            { title: "STUDY HOURS", lines: 2 },
+        ],
+        wedding: [
+            { title: "TASKS THIS WEEK", lines: 4 },
+            { title: "VENDOR FOLLOW-UPS", lines: 4 },
+            { title: "BUDGET CHECK", lines: 3 },
+            { title: "DECISIONS TO MAKE", lines: 3 },
+            { title: "NOTES", lines: 3 },
+        ],
+        business: [
+            { title: "REVENUE STREAMS", lines: 4 },
+            { title: "EXPENSES", lines: 5 },
+            { title: "KEY METRICS", lines: 3 },
+            { title: "WINS & LESSONS", lines: 3 },
+        ],
+        password: [
+            { title: "ACCOUNT 1", lines: 4 },
+            { title: "ACCOUNT 2", lines: 4 },
+            { title: "ACCOUNT 3", lines: 4 },
+            { title: "ACCOUNT 4", lines: 4 },
+        ],
+        reading: [
+            { title: "BOOK DETAILS", lines: 3 },
+            { title: "FAVORITE QUOTES", lines: 4 },
+            { title: "KEY TAKEAWAYS", lines: 4 },
+            { title: "RATING & REVIEW", lines: 3 },
+        ],
+        sleep: [
+            { title: "SLEEP LOG", lines: 3 },
+            { title: "SLEEP QUALITY RATING", lines: 2 },
+            { title: "DREAMS", lines: 3 },
+            { title: "ENERGY NEXT DAY", lines: 2 },
+            { title: "NOTES", lines: 3 },
+        ],
+        project: [
+            { title: "PROJECT OVERVIEW", lines: 3 },
+            { title: "TASKS & MILESTONES", lines: 6 },
+            { title: "BLOCKERS", lines: 3 },
+            { title: "NEXT STEPS", lines: 3 },
+        ],
+        cleaning: [
+            { title: "DAILY TASKS", lines: 4 },
+            { title: "WEEKLY DEEP CLEAN", lines: 4 },
+            { title: "MONTHLY TASKS", lines: 4 },
+            { title: "SUPPLIES NEEDED", lines: 3 },
+        ],
+        travel: [
+            { title: "ITINERARY", lines: 5 },
+            { title: "PACKING LIST", lines: 5 },
+            { title: "BUDGET", lines: 4 },
+            { title: "MEMORIES & NOTES", lines: 3 },
+        ],
+        pregnancy: [
+            { title: "WEEKLY SYMPTOMS", lines: 4 },
+            { title: "APPOINTMENTS", lines: 3 },
+            { title: "BABY DEVELOPMENT", lines: 3 },
+            { title: "CRAVINGS & MOOD", lines: 3 },
+            { title: "NOTES & MEMORIES", lines: 3 },
+        ],
+        pet: [
+            { title: "FEEDING LOG", lines: 3 },
+            { title: "ACTIVITY & WALKS", lines: 3 },
+            { title: "VET / MEDICATION", lines: 3 },
+            { title: "BEHAVIOR NOTES", lines: 3 },
+        ],
+        garden: [
+            { title: "PLANTING LOG", lines: 4 },
+            { title: "WATERING & CARE", lines: 4 },
+            { title: "PEST & DISEASE", lines: 3 },
+            { title: "HARVEST NOTES", lines: 3 },
+        ],
+        mood: [
+            { title: "TODAY'S MOOD (fill circles)", lines: 2 },
+            { title: "WHAT TRIGGERED THIS MOOD", lines: 3 },
+            { title: "SLEEP & ENERGY", lines: 3 },
+            { title: "COPING & SELF-CARE", lines: 3 },
+            { title: "GRATITUDE", lines: 3 },
+        ],
+        debt: [
+            { title: "DEBT INVENTORY", lines: 4 },
+            { title: "PAYMENTS THIS MONTH", lines: 5 },
+            { title: "EXTRA PAYMENT PLAN", lines: 3 },
+            { title: "PROGRESS & MILESTONES", lines: 3 },
+        ],
+        medication: [
+            { title: "MEDICATION SCHEDULE", lines: 4 },
+            { title: "DOSES TAKEN (check off)", lines: 4 },
+            { title: "SIDE EFFECTS", lines: 3 },
+            { title: "NOTES FOR DOCTOR", lines: 3 },
         ],
     };
     return sections[type] || sections.daily;
