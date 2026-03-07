@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlannerForge - Custom Printable Planners</title>
+    <meta name="description" content="Create your own custom printable planner in seconds. Choose type, colors, sections, and download a beautiful PDF instantly.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <style>
+        :root {
+            --cream: #fcf8f0;
+            --charcoal: #323232;
+            --warm-gray: #a5a09a;
+            --light-gray: #e6e4e1;
+            --sage: #8ba485;
+            --light-sage: #d2e1ce;
+            --dusty-rose: #bc8f8f;
+            --light-rose: #ebd2d2;
+            --soft-blue: #8caac3;
+            --light-blue: #d2e1ee;
+            --terracotta: #b27253;
+            --light-terra: #e4c6b2;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--charcoal);
+            background: var(--cream);
+            line-height: 1.6;
+        }
+
+        .serif { font-family: 'Playfair Display', Georgia, serif; }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(252, 248, 240, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--light-gray);
+            padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        nav .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; }
+        nav .nav-links a {
+            text-decoration: none; color: var(--charcoal);
+            margin-left: 2rem; font-size: 0.9rem; font-weight: 500;
+        }
+        nav .nav-links a:hover { color: var(--sage); }
+
+        /* Hero */
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            max-width: 800px; margin: 0 auto;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem; font-weight: 700;
+            margin-bottom: 1rem; line-height: 1.2;
+        }
+        .hero p {
+            font-size: 1.15rem; color: #666;
+            max-width: 600px; margin: 0 auto 2rem;
+            font-weight: 300;
+        }
+        .hero .cta-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            display: inline-block; padding: 0.85rem 2rem;
+            border-radius: 6px; text-decoration: none;
+            font-weight: 500; font-size: 0.95rem;
+            cursor: pointer; border: none; transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--sage); color: white;
+        }
+        .btn-primary:hover { background: #7a9375; }
+        .btn-secondary {
+            background: transparent; color: var(--charcoal);
+            border: 1.5px solid var(--charcoal);
+        }
+        .btn-secondary:hover { background: var(--charcoal); color: white; }
+
+        /* Dot separator */
+        .dot-sep {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; padding: 2rem 0;
+        }
+        .dot-sep .dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--light-gray);
+        }
+        .dot-sep .dot.accent { width: 8px; height: 8px; background: var(--sage); }
+
+        /* Section headers */
+        .section-header {
+            text-align: center; padding: 1rem 2rem;
+        }
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem; margin-bottom: 0.5rem;
+        }
+        .section-header p { color: #888; font-weight: 300; }
+
+        /* Products Grid */
+        .products {
+            max-width: 1100px; margin: 0 auto;
+            padding: 0 2rem 3rem;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .product-card {
+            background: white; border-radius: 10px;
+            overflow: hidden; border: 1px solid var(--light-gray);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        .product-card .card-color {
+            height: 8px; width: 100%;
+        }
+        .product-card .card-body { padding: 1.5rem; }
+        .product-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem; margin-bottom: 0.3rem;
+        }
+        .product-card .subtitle {
+            font-size: 0.85rem; color: #888; margin-bottom: 0.8rem;
+        }
+        .product-card .features {
+            list-style: none; margin-bottom: 1rem;
+        }
+        .product-card .features li {
+            font-size: 0.85rem; padding: 0.2rem 0;
+            color: #555;
+        }
+        .product-card .features li::before {
+            content: "\25C6"; margin-right: 0.5rem; font-size: 0.6rem;
+            vertical-align: middle;
+        }
+        .product-card .price-row {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .product-card .price {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem; font-weight: 700;
+        }
+        .product-card .buy-btn {
+            padding: 0.5rem 1.2rem; border-radius: 5px;
+            font-size: 0.85rem; cursor: pointer;
+            border: 1.5px solid var(--charcoal);
+            background: transparent; color: var(--charcoal);
+            transition: all 0.2s;
+        }
+        .product-card .buy-btn:hover {
+            background: var(--charcoal); color: white;
+        }
+
+        /* Builder Section */
+        #builder {
+            background: white;
+            padding: 3rem 2rem;
+            margin: 2rem auto;
+            max-width: 900px;
+            border-radius: 12px;
+            border: 1px solid var(--light-gray);
+        }
+        .builder-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 2rem; margin-top: 2rem;
+        }
+        @media (max-width: 700px) {
+            .builder-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.2rem; }
+        }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label {
+            display: block; font-weight: 500;
+            font-size: 0.9rem; margin-bottom: 0.4rem;
+        }
+        .form-group select, .form-group input {
+            width: 100%; padding: 0.65rem 0.8rem;
+            border: 1.5px solid var(--light-gray);
+            border-radius: 6px; font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+        }
+        .form-group select:focus, .form-group input:focus {
+            outline: none; border-color: var(--sage);
+        }
+        .color-swatches {
+            display: flex; gap: 0.5rem; flex-wrap: wrap;
+        }
+        .color-swatch {
+            width: 36px; height: 36px; border-radius: 50%;
+            cursor: pointer; border: 3px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .color-swatch.selected { border-color: var(--charcoal); }
+        .color-swatch:hover { border-color: var(--warm-gray); }
+
+        .preview-box {
+            background: var(--cream); border-radius: 8px;
+            padding: 2rem; text-align: center;
+            border: 1px solid var(--light-gray);
+            min-height: 300px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .preview-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem; margin-bottom: 0.5rem;
+        }
+        .preview-box .preview-subtitle {
+            font-style: italic; color: #888;
+            margin-bottom: 1.5rem;
+        }
+        .preview-box .preview-features {
+            list-style: none; text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        .preview-box .preview-features li {
+            padding: 0.3rem 0; font-size: 0.9rem;
+        }
+        .preview-box .preview-features li::before {
+            content: "\25C6"; margin-right: 0.5rem;
+            font-size: 0.6rem; vertical-align: middle;
+        }
+
+        .generate-btn {
+            width: 100%; padding: 1rem;
+            background: var(--sage); color: white;
+            border: none; border-radius: 6px;
+            font-size: 1rem; font-weight: 600;
+            cursor: pointer; margin-top: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s;
+        }
+        .generate-btn:hover { background: #7a9375; }
+        .generate-btn:disabled { background: var(--warm-gray); cursor: wait; }
+
+        /* Bundle banner */
+        .bundle-banner {
+            max-width: 900px; margin: 2rem auto;
+            background: var(--charcoal); color: white;
+            border-radius: 12px; padding: 2.5rem;
+            text-align: center;
+        }
+        .bundle-banner h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem; margin-bottom: 0.5rem;
+        }
+        .bundle-banner .old-price {
+            text-decoration: line-through; color: #999;
+            font-size: 1.1rem;
+        }
+        .bundle-banner .new-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem; font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        .bundle-banner .savings {
+            background: var(--sage); display: inline-block;
+            padding: 0.3rem 1rem; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .bundle-banner .btn-primary {
+            font-size: 1.1rem; padding: 1rem 3rem;
+            margin-top: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center; padding: 3rem 2rem;
+            color: var(--warm-gray); font-size: 0.85rem;
+        }
+        footer a { color: var(--warm-gray); }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">PlannerForge</div>
+    <div class="nav-links">
+        <a href="#products">Shop</a>
+        <a href="#builder">Build Your Own</a>
+        <a href="#bundle">Bundle Deal</a>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1 class="serif">Beautiful Planners,<br>Built Your Way</h1>
+    <p>Premium printable planners for health, finance, wellness, and more. Or create your own custom planner in seconds.</p>
+    <div class="cta-row">
+        <a href="#builder" class="btn btn-primary">Build Custom Planner</a>
+        <a href="#products" class="btn btn-secondary">Browse Collection</a>
+    </div>
+</section>
+
+<div class="dot-sep">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="dot accent"></span>
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+</div>
+
+<div class="section-header" id="products">
+    <h2 class="serif">The Collection</h2>
+    <p>13 professionally designed planners, ready to download and print</p>
+</div>
+
+<div class="products" id="product-grid"></div>
+
+<div class="dot-sep">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="dot accent"></span>
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+</div>
+
+<div class="section-header">
+    <h2 class="serif" id="builder-heading">Build Your Own Planner</h2>
+    <p>Choose your type, pick your colors, customize sections, download instantly</p>
+</div>
+
+<section id="builder">
+    <div class="builder-grid">
+        <div class="builder-options">
+            <div class="form-group">
+                <label>Planner Type</label>
+                <select id="planner-type">
+                    <option value="daily">Daily Planner (31 days)</option>
+                    <option value="weekly">Weekly Planner (12 weeks)</option>
+                    <option value="habit">Habit Tracker (31 days)</option>
+                    <option value="gratitude">Gratitude Journal (31 days)</option>
+                    <option value="budget">Monthly Budget (12 months)</option>
+                    <option value="fitness">Fitness Log (31 days)</option>
+                    <option value="meal">Meal Planner (4 weeks)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Accent Color</label>
+                <div class="color-swatches" id="color-picker">
+                    <div class="color-swatch selected" data-color="sage" style="background: #8ba485;" title="Sage"></div>
+                    <div class="color-swatch" data-color="rose" style="background: #bc8f8f;" title="Dusty Rose"></div>
+                    <div class="color-swatch" data-color="blue" style="background: #8caac3;" title="Soft Blue"></div>
+                    <div class="color-swatch" data-color="terra" style="background: #b27253;" title="Terracotta"></div>
+                    <div class="color-swatch" data-color="lavender" style="background: #9688b8;" title="Lavender"></div>
+                    <div class="color-swatch" data-color="navy" style="background: #4b5f7d;" title="Navy"></div>
+                    <div class="color-swatch" data-color="coral" style="background: #c38072;" title="Coral"></div>
+                    <div class="color-swatch" data-color="olive" style="background: #8d9b6b;" title="Olive"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Your Name (optional, for cover page)</label>
+                <input type="text" id="planner-name" placeholder="e.g. Sarah's Planner">
+            </div>
+            <div class="form-group">
+                <label>Paper Size</label>
+                <select id="paper-size">
+                    <option value="letter">US Letter (8.5" x 11")</option>
+                    <option value="a4">A4 (210mm x 297mm)</option>
+                </select>
+            </div>
+            <button class="generate-btn" id="generate-btn" onclick="generatePlanner()">
+                Generate & Download PDF (Free Preview)
+            </button>
+        </div>
+        <div class="builder-preview">
+            <div class="preview-box" id="preview">
+                <h3 id="preview-title" class="serif">Daily Planner</h3>
+                <div class="preview-subtitle" id="preview-subtitle">31 Daily Pages</div>
+                <ul class="preview-features" id="preview-features">
+                    <li>Morning check-in & mood</li>
+                    <li>Top 3 priorities</li>
+                    <li>Hourly schedule</li>
+                    <li>Evening reflection</li>
+                </ul>
+                <div style="font-size: 0.8rem; color: #aaa;">Live preview updates as you choose</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="dot-sep">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="dot accent"></span>
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+</div>
+
+<div class="bundle-banner" id="bundle">
+    <div class="savings">Save 61%</div>
+    <h2 class="serif">Ultimate Planner Bundle</h2>
+    <p>All 13 planners in one download</p>
+    <div class="old-price">$64.87</div>
+    <div class="new-price">$24.99</div>
+    <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #ccc;">Health + Finance + Fitness + Academic + Lifestyle</p>
+    <a href="#" class="btn btn-primary" id="bundle-buy">Get the Bundle</a>
+</div>
+
+<footer>
+    <p>PlannerForge by SaltedPixel Co.</p>
+    <p style="margin-top: 0.5rem;">Printable PDF planners designed for the way you live.</p>
+</footer>
+
+<script>
+const PRODUCTS = [
+    { name: "Migraine Tracker", sub: "31-Day Daily Log", price: "$4.99", color: "#bc8f8f", features: ["Pain level & location", "12 symptom checkboxes", "Trigger tracking", "Monthly summary"] },
+    { name: "FODMAP Food Diary", sub: "31-Day IBS Tracker", price: "$5.49", color: "#8ba485", features: ["4 meals + timing", "8 symptom checkboxes", "Severity scale (1-10)", "Monthly patterns"] },
+    { name: "Monthly Budget", sub: "12-Month Financial Planner", price: "$4.49", color: "#8caac3", features: ["Income vs expenses", "Savings goals", "Annual overview", "Expected vs actual"] },
+    { name: "Daily Wellness", sub: "31-Day Mind Body Soul", price: "$4.99", color: "#b27253", features: ["Mood & energy tracking", "Gratitude journal", "Habit checkboxes", "Evening reflection"] },
+    { name: "Anxiety Journal", sub: "31-Day CBT Records", price: "$4.99", color: "#9688b8", features: ["Morning check-in", "Trigger identification", "CBT thought record", "Coping strategies"] },
+    { name: "Fitness Tracker", sub: "31-Day Workout Log", price: "$4.99", color: "#557855", features: ["10 exercises per day", "Cardio & nutrition", "Body measurements", "Personal records"] },
+    { name: "Wedding Planner", sub: "Complete Organizer", price: "$6.99", color: "#b89caf", features: ["Budget tracker", "Guest list (60+)", "Vendor contacts", "Timeline checklists"] },
+    { name: "Meal Prep Planner", sub: "4-Week Planning Kit", price: "$4.49", color: "#8d9b6b", features: ["7-day meal grids", "Shopping lists", "Budget tracking", "Prep notes"] },
+    { name: "Student Planner", sub: "Full Semester Academic", price: "$4.99", color: "#c38072", features: ["16 weekly spreads", "Course overview", "Exam prep tracker", "Grade calculator"] },
+    { name: "Gratitude Journal", sub: "90-Day Guided Practice", price: "$4.99", color: "#b27253", features: ["3 daily gratitudes", "Positive moments", "Appreciation practice", "Reflection"] },
+    { name: "Habit Tracker", sub: "12-Month Daily Grid", price: "$3.99", color: "#b4a05f", features: ["15 habits per month", "31-day visual grid", "Monthly reflection", "Full year"] },
+    { name: "Business Planner", sub: "12-Month Revenue Tracker", price: "$5.49", color: "#4b5f7d", features: ["Revenue tracking", "Expense categories", "Marketing calendar", "Key metrics"] },
+    { name: "Password Organizer", sub: "A-Z Account Tracker", price: "$2.99", color: "#647c8c", features: ["104 account entries", "Alphabetical pages", "Security questions", "Date tracking"] },
+];
+
+const PLANNER_TYPES = {
+    daily: { title: "Daily Planner", sub: "31 Daily Pages", features: ["Morning check-in & mood", "Top 3 priorities", "Hourly schedule", "Evening reflection"] },
+    weekly: { title: "Weekly Planner", sub: "12 Weekly Spreads", features: ["Week at a glance", "Goal setting", "To-do lists", "Weekly review"] },
+    habit: { title: "Habit Tracker", sub: "31-Day Grid", features: ["15 habit slots", "Visual tracking grid", "Monthly reflection", "Streak counter"] },
+    gratitude: { title: "Gratitude Journal", sub: "31 Daily Pages", features: ["3 daily gratitudes", "Positive moments", "What went well", "Appreciation notes"] },
+    budget: { title: "Monthly Budget", sub: "12 Monthly Pages", features: ["Income tracking", "Expense categories", "Savings goals", "Monthly summary"] },
+    fitness: { title: "Fitness Log", sub: "31 Daily Pages", features: ["Exercise logging", "Sets & reps", "Cardio tracking", "Nutrition notes"] },
+    meal: { title: "Meal Planner", sub: "4 Weekly Grids", features: ["7-day meal grid", "Shopping list", "Prep notes", "Budget tracking"] },
+};
+
+const COLORS = {
+    sage: { accent: [139, 164, 133], light: [210, 225, 206], pale: [235, 243, 232] },
+    rose: { accent: [188, 143, 143], light: [235, 210, 210], pale: [245, 232, 232] },
+    blue: { accent: [140, 170, 195], light: [210, 225, 238], pale: [235, 243, 250] },
+    terra: { accent: [178, 114, 83], light: [228, 198, 178], pale: [245, 233, 224] },
+    lavender: { accent: [150, 136, 184], light: [215, 208, 230], pale: [238, 234, 246] },
+    navy: { accent: [75, 95, 125], light: [180, 195, 215], pale: [225, 232, 242] },
+    coral: { accent: [195, 128, 114], light: [232, 200, 192], pale: [245, 232, 228] },
+    olive: { accent: [141, 155, 107], light: [210, 218, 192], pale: [238, 242, 230] },
+};
+
+// Render product cards
+const grid = document.getElementById('product-grid');
+PRODUCTS.forEach(p => {
+    grid.innerHTML += `
+        <div class="product-card">
+            <div class="card-color" style="background: ${p.color};"></div>
+            <div class="card-body">
+                <h3>${p.name}</h3>
+                <div class="subtitle">${p.sub}</div>
+                <ul class="features">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
+                <div class="price-row">
+                    <span class="price">${p.price}</span>
+                    <button class="buy-btn" onclick="alert('Store links coming soon! Products available on Etsy at saltedpixel.etsy.com')">View on Etsy</button>
+                </div>
+            </div>
+        </div>`;
+});
+
+// Color picker
+document.querySelectorAll('.color-swatch').forEach(s => {
+    s.addEventListener('click', () => {
+        document.querySelectorAll('.color-swatch').forEach(x => x.classList.remove('selected'));
+        s.classList.add('selected');
+        updatePreview();
+    });
+});
+
+// Live preview update
+document.getElementById('planner-type').addEventListener('change', updatePreview);
+
+function updatePreview() {
+    const type = document.getElementById('planner-type').value;
+    const info = PLANNER_TYPES[type];
+    const color = document.querySelector('.color-swatch.selected').dataset.color;
+    const colorData = COLORS[color];
+
+    document.getElementById('preview-title').textContent = info.title;
+    document.getElementById('preview-subtitle').textContent = info.sub;
+    document.getElementById('preview-features').innerHTML = info.features.map(f => `<li>${f}</li>`).join('');
+
+    const box = document.getElementById('preview');
+    box.style.background = `rgb(${colorData.pale.join(',')})`;
+    document.getElementById('preview-title').style.color = `rgb(${colorData.accent.join(',')})`;
+}
+
+// PDF Generation
+async function generatePlanner() {
+    const btn = document.getElementById('generate-btn');
+    btn.disabled = true;
+    btn.textContent = 'Generating PDF...';
+
+    try {
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        const pdfDoc = await PDFDocument.create();
+        const timesRoman = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+        const timesRomanBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+        const timesRomanItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanItalic);
+        const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+        const type = document.getElementById('planner-type').value;
+        const colorName = document.querySelector('.color-swatch.selected').dataset.color;
+        const userName = document.getElementById('planner-name').value;
+        const paperSize = document.getElementById('paper-size').value;
+        const info = PLANNER_TYPES[type];
+        const colors = COLORS[colorName];
+
+        const W = paperSize === 'letter' ? 612 : 595;
+        const H = paperSize === 'letter' ? 792 : 842;
+
+        const accent = rgb(colors.accent[0]/255, colors.accent[1]/255, colors.accent[2]/255);
+        const pale = rgb(colors.pale[0]/255, colors.pale[1]/255, colors.pale[2]/255);
+        const light = rgb(colors.light[0]/255, colors.light[1]/255, colors.light[2]/255);
+        const cream = rgb(0.988, 0.973, 0.941);
+        const charcoal = rgb(0.196, 0.196, 0.196);
+        const warmGray = rgb(0.647, 0.627, 0.608);
+
+        // --- Cover Page ---
+        const cover = pdfDoc.addPage([W, H]);
+        cover.drawRectangle({ x: 0, y: 0, width: W, height: H, color: cream });
+
+        // Corner flourishes
+        const cLen = 40;
+        [
+            [40, H-40, cLen, 0, 0, -cLen],
+            [W-40, H-40, -cLen, 0, 0, -cLen],
+            [40, 40, cLen, 0, 0, cLen],
+            [W-40, 40, -cLen, 0, 0, cLen],
+        ].forEach(([x, y, dx1, dy1, dx2, dy2]) => {
+            cover.drawLine({ start: {x, y}, end: {x: x+dx1, y: y+dy1}, color: accent, thickness: 1 });
+            cover.drawLine({ start: {x, y}, end: {x: x+dx2, y: y+dy2}, color: accent, thickness: 1 });
+        });
+
+        // Dot rows
+        for (let i = 0; i < 20; i++) {
+            const dx = 80 + (W - 160) / 21 * (i + 1);
+            cover.drawEllipse({ x: dx, y: H - 200, xScale: 3, yScale: 3, color: light });
+            cover.drawEllipse({ x: dx, y: H - 420, xScale: 3, yScale: 3, color: light });
+        }
+
+        // Title panel
+        const panelTop = H - 390;
+        const panelH = 150;
+        cover.drawRectangle({ x: 60, y: panelTop, width: W - 120, height: panelH, color: pale });
+        cover.drawRectangle({ x: 60, y: panelTop + panelH - 4, width: W - 120, height: 4, color: accent });
+        cover.drawRectangle({ x: 60, y: panelTop, width: W - 120, height: 4, color: accent });
+
+        // Title
+        const titleSize = 32;
+        const titleWidth = timesRomanBold.widthOfTextAtSize(info.title, titleSize);
+        cover.drawText(info.title, {
+            x: (W - titleWidth) / 2, y: panelTop + panelH - 55,
+            size: titleSize, font: timesRomanBold, color: charcoal
+        });
+
+        // Separator dot
+        cover.drawEllipse({ x: W/2, y: panelTop + panelH - 80, xScale: 4, yScale: 4, color: accent });
+        cover.drawLine({ start: {x: W/2 - 80, y: panelTop + panelH - 80}, end: {x: W/2 - 15, y: panelTop + panelH - 80}, color: accent, thickness: 1 });
+        cover.drawLine({ start: {x: W/2 + 15, y: panelTop + panelH - 80}, end: {x: W/2 + 80, y: panelTop + panelH - 80}, color: accent, thickness: 1 });
+
+        // Subtitle
+        const subSize = 14;
+        const subWidth = timesRomanItalic.widthOfTextAtSize(info.sub, subSize);
+        cover.drawText(info.sub, {
+            x: (W - subWidth) / 2, y: panelTop + 30,
+            size: subSize, font: timesRomanItalic, color: accent
+        });
+
+        // Name field
+        const nameText = userName || "Name: _________________________________";
+        const nameWidth = timesRoman.widthOfTextAtSize(nameText, 11);
+        cover.drawText(nameText, {
+            x: (W - nameWidth) / 2, y: panelTop - 60,
+            size: 11, font: timesRoman, color: charcoal
+        });
+
+        // Brand
+        const brandText = "PlannerForge by SaltedPixel Co.";
+        const brandWidth = timesRoman.widthOfTextAtSize(brandText, 8);
+        cover.drawText(brandText, {
+            x: (W - brandWidth) / 2, y: 60,
+            size: 8, font: timesRoman, color: warmGray
+        });
+
+        // --- Generate inner pages based on type ---
+        const numPages = type === 'budget' ? 12 : type === 'meal' ? 4 : type === 'weekly' ? 12 : 31;
+        const pageLabels = {
+            budget: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+            weekly: Array.from({length:12}, (_,i) => `Week ${i+1}`),
+        };
+
+        for (let i = 0; i < Math.min(numPages, 5); i++) { // Free preview: 5 pages
+            const page = pdfDoc.addPage([W, H]);
+            page.drawRectangle({ x: 0, y: 0, width: W, height: H, color: cream });
+
+            // Header
+            page.drawRectangle({ x: 0, y: H - 50, width: W, height: 50, color: pale });
+            page.drawRectangle({ x: 0, y: H - 52, width: W, height: 3, color: accent });
+
+            const label = pageLabels[type] ? pageLabels[type][i] : `Day ${i + 1}`;
+            const headerText = `${info.title}  -  ${label}`;
+            const headerWidth = timesRomanBold.widthOfTextAtSize(headerText, 13);
+            page.drawText(headerText, {
+                x: (W - headerWidth) / 2, y: H - 35,
+                size: 13, font: timesRomanBold, color: charcoal
+            });
+
+            // Section bars based on planner type
+            let y = H - 80;
+            const sections = getSections(type);
+
+            sections.forEach(section => {
+                if (y < 80) return;
+                // Accent left bar
+                page.drawRectangle({ x: 30, y: y - 2, width: 4, height: 18, color: accent });
+                // Light bg
+                page.drawRectangle({ x: 34, y: y - 2, width: W - 90, height: 18, color: pale });
+                // Section title
+                page.drawText(section.title, {
+                    x: 40, y: y + 2, size: 9, font: timesRomanBold, color: charcoal
+                });
+                y -= 22;
+
+                // Lines for writing
+                for (let l = 0; l < section.lines; l++) {
+                    if (y < 80) return;
+                    page.drawLine({
+                        start: { x: 35, y }, end: { x: W - 35, y },
+                        color: rgb(0.9, 0.89, 0.88), thickness: 0.5
+                    });
+                    y -= 18;
+                }
+                y -= 10;
+            });
+
+            // Footer
+            const footText = "PlannerForge by SaltedPixel Co.";
+            const footWidth = timesRoman.widthOfTextAtSize(footText, 7);
+            page.drawText(footText, {
+                x: (W - footWidth) / 2, y: 30,
+                size: 7, font: timesRoman, color: warmGray
+            });
+        }
+
+        // Watermark page for free version
+        const waterPage = pdfDoc.addPage([W, H]);
+        waterPage.drawRectangle({ x: 0, y: 0, width: W, height: H, color: cream });
+        const wmText = "Free Preview - 5 Pages";
+        const wmWidth = timesRomanBold.widthOfTextAtSize(wmText, 24);
+        waterPage.drawText(wmText, {
+            x: (W - wmWidth) / 2, y: H/2 + 40,
+            size: 24, font: timesRomanBold, color: accent
+        });
+        const wmText2 = `Full ${info.title} has ${numPages} pages`;
+        const wmWidth2 = timesRomanItalic.widthOfTextAtSize(wmText2, 14);
+        waterPage.drawText(wmText2, {
+            x: (W - wmWidth2) / 2, y: H/2,
+            size: 14, font: timesRomanItalic, color: warmGray
+        });
+        const wmText3 = "Get the full version at saltedpixel.etsy.com";
+        const wmWidth3 = timesRoman.widthOfTextAtSize(wmText3, 12);
+        waterPage.drawText(wmText3, {
+            x: (W - wmWidth3) / 2, y: H/2 - 40,
+            size: 12, font: timesRoman, color: charcoal
+        });
+
+        // Save and download
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `PlannerForge_${info.title.replace(/\s+/g, '_')}_preview.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+    } catch (err) {
+        console.error(err);
+        alert('Error generating PDF. Please try again.');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Generate & Download PDF (Free Preview)';
+}
+
+function getSections(type) {
+    const sections = {
+        daily: [
+            { title: "MORNING CHECK-IN", lines: 3 },
+            { title: "TOP 3 PRIORITIES", lines: 3 },
+            { title: "SCHEDULE", lines: 8 },
+            { title: "NOTES", lines: 3 },
+            { title: "EVENING REFLECTION", lines: 3 },
+        ],
+        weekly: [
+            { title: "GOALS THIS WEEK", lines: 3 },
+            { title: "MONDAY - WEDNESDAY", lines: 6 },
+            { title: "THURSDAY - FRIDAY", lines: 4 },
+            { title: "WEEKEND", lines: 3 },
+            { title: "WEEKLY REVIEW", lines: 3 },
+        ],
+        habit: [
+            { title: "HABITS TO TRACK", lines: 5 },
+            { title: "TODAY'S LOG", lines: 5 },
+            { title: "REFLECTIONS", lines: 4 },
+        ],
+        gratitude: [
+            { title: "TODAY I'M GRATEFUL FOR", lines: 3 },
+            { title: "POSITIVE MOMENTS", lines: 4 },
+            { title: "WHAT WENT WELL", lines: 3 },
+            { title: "APPRECIATION NOTES", lines: 4 },
+        ],
+        budget: [
+            { title: "INCOME", lines: 4 },
+            { title: "FIXED EXPENSES", lines: 5 },
+            { title: "VARIABLE EXPENSES", lines: 5 },
+            { title: "SAVINGS & SUMMARY", lines: 3 },
+        ],
+        fitness: [
+            { title: "EXERCISES", lines: 6 },
+            { title: "CARDIO", lines: 3 },
+            { title: "NUTRITION", lines: 4 },
+            { title: "NOTES", lines: 3 },
+        ],
+        meal: [
+            { title: "MEAL PLAN", lines: 7 },
+            { title: "SHOPPING LIST", lines: 6 },
+            { title: "PREP NOTES", lines: 3 },
+        ],
+    };
+    return sections[type] || sections.daily;
+}
+
+// Init
+updatePreview();
+</script>
+
+</body>
+</html>
