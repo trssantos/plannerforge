@@ -11,9 +11,36 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="theme-color" content="#8ba485">
-    <meta property="og:title" content="PlannerForge - Custom Printable Planners">
-    <meta property="og:description" content="Premium printable planners for health, finance, wellness & more. Or build your own custom planner in seconds.">
+    <meta property="og:title" content="PlannerForge - Free Custom Printable Planner Generator">
+    <meta property="og:description" content="Create beautiful printable planners instantly. 26 types — daily, budget, fitness, wedding, habit & more. Choose colors, customize sections, download PDF free. No signup.">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://trssantos.github.io/plannerforge/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PlannerForge - Free Printable Planner Generator">
+    <meta name="twitter:description" content="26 customizable printable planners. Pick type, colors, download PDF instantly. Free, no signup.">
+    <link rel="canonical" href="https://trssantos.github.io/plannerforge/">
+    <meta name="keywords" content="free printable planner, custom planner generator, printable budget planner, habit tracker printable, meal planner printable, wedding planner printable, student planner, fitness tracker, FODMAP diary, migraine tracker, anxiety journal, gratitude journal">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PlannerForge",
+      "url": "https://trssantos.github.io/plannerforge/",
+      "description": "Free custom printable planner generator. 26 planner types with color customization. Download beautiful PDFs instantly.",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": "Daily Planner, Weekly Planner, Budget Planner, Habit Tracker, Fitness Log, Meal Planner, Wedding Planner, Student Planner, Migraine Tracker, FODMAP Diary, Anxiety Journal, Gratitude Journal, Reading Log, Sleep Tracker, Pregnancy Journal, Pet Care Tracker, Garden Planner, Mood Tracker, Debt Payoff Planner, Medication Tracker",
+      "creator": {
+        "@type": "Organization",
+        "name": "SaltedPixel Co."
+      }
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -299,7 +326,7 @@
     <div class="nav-links">
         <a href="#products">Shop</a>
         <a href="#builder">Build Your Own</a>
-        <a href="#bundle">Bundle Deal</a>
+        <a href="https://trssantos.github.io/printablecal/" title="Free Printable Calendar Generator">Calendars</a>
     </div>
 </nav>
 
@@ -394,6 +421,10 @@
                     <option value="a4">A4 (210mm x 297mm)</option>
                 </select>
             </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:0.6rem;">
+                <input type="checkbox" id="low-ink" style="width:auto; accent-color: var(--sage);">
+                <label for="low-ink" style="margin:0; cursor:pointer;">Low-ink mode <span style="color:#aaa; font-weight:300;">(saves printer ink)</span></label>
+            </div>
             <button class="generate-btn" id="generate-btn" onclick="generatePlanner()">
                 Generate & Download Full PDF — Free
             </button>
@@ -434,6 +465,7 @@
 <footer>
     <p>PlannerForge by SaltedPixel Co.</p>
     <p style="margin-top: 0.5rem;">Printable PDF planners designed for the way you live.</p>
+    <p style="margin-top: 0.5rem;"><a href="https://trssantos.github.io/printablecal/">PrintableCal</a> — Free printable calendar generator</p>
 </footer>
 
 <script>
@@ -556,6 +588,7 @@ async function generatePlanner() {
         const colorName = document.querySelector('.color-swatch.selected').dataset.color;
         const userName = document.getElementById('planner-name').value;
         const paperSize = document.getElementById('paper-size').value;
+        const lowInk = document.getElementById('low-ink').checked;
         const info = PLANNER_TYPES[type];
         const colors = COLORS[colorName];
 
@@ -586,18 +619,22 @@ async function generatePlanner() {
         });
 
         // Dot rows
-        for (let i = 0; i < 20; i++) {
-            const dx = 80 + (W - 160) / 21 * (i + 1);
-            cover.drawEllipse({ x: dx, y: H - 200, xScale: 3, yScale: 3, color: light });
-            cover.drawEllipse({ x: dx, y: H - 420, xScale: 3, yScale: 3, color: light });
+        if (!lowInk) {
+            for (let i = 0; i < 20; i++) {
+                const dx = 80 + (W - 160) / 21 * (i + 1);
+                cover.drawEllipse({ x: dx, y: H - 200, xScale: 3, yScale: 3, color: light });
+                cover.drawEllipse({ x: dx, y: H - 420, xScale: 3, yScale: 3, color: light });
+            }
         }
 
         // Title panel
         const panelTop = H - 390;
         const panelH = 150;
-        cover.drawRectangle({ x: 60, y: panelTop, width: W - 120, height: panelH, color: pale });
-        cover.drawRectangle({ x: 60, y: panelTop + panelH - 4, width: W - 120, height: 4, color: accent });
-        cover.drawRectangle({ x: 60, y: panelTop, width: W - 120, height: 4, color: accent });
+        if (!lowInk) {
+            cover.drawRectangle({ x: 60, y: panelTop, width: W - 120, height: panelH, color: pale });
+        }
+        cover.drawRectangle({ x: 60, y: panelTop + panelH - 4, width: W - 120, height: lowInk ? 1 : 4, color: accent });
+        cover.drawRectangle({ x: 60, y: panelTop, width: W - 120, height: lowInk ? 1 : 4, color: accent });
 
         // Title
         const titleSize = 32;
@@ -658,8 +695,10 @@ async function generatePlanner() {
             page.drawRectangle({ x: 0, y: 0, width: W, height: H, color: cream });
 
             // Header
-            page.drawRectangle({ x: 0, y: H - 50, width: W, height: 50, color: pale });
-            page.drawRectangle({ x: 0, y: H - 52, width: W, height: 3, color: accent });
+            if (!lowInk) {
+                page.drawRectangle({ x: 0, y: H - 50, width: W, height: 50, color: pale });
+            }
+            page.drawRectangle({ x: 0, y: H - 52, width: W, height: lowInk ? 1 : 3, color: accent });
 
             const label = pageLabels[type] ? pageLabels[type][i] : `Day ${i + 1}`;
             const headerText = `${info.title}  -  ${label}`;
@@ -676,9 +715,11 @@ async function generatePlanner() {
             sections.forEach(section => {
                 if (y < 80) return;
                 // Accent left bar
-                page.drawRectangle({ x: 30, y: y - 2, width: 4, height: 18, color: accent });
+                page.drawRectangle({ x: 30, y: y - 2, width: lowInk ? 2 : 4, height: 18, color: accent });
                 // Light bg
-                page.drawRectangle({ x: 34, y: y - 2, width: W - 90, height: 18, color: pale });
+                if (!lowInk) {
+                    page.drawRectangle({ x: 34, y: y - 2, width: W - 90, height: 18, color: pale });
+                }
                 // Section title
                 page.drawText(section.title, {
                     x: 40, y: y + 2, size: 9, font: timesRomanBold, color: charcoal
